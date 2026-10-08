@@ -15,6 +15,7 @@
 import unittest
 
 import numpy as np
+import pytest
 from huggingface_hub import hf_hub_download
 
 from transformers import is_torch_available, is_vision_available
@@ -32,6 +33,7 @@ from transformers.testing_utils import (
     require_vision,
 )
 from transformers.video_utils import (
+    get_uniform_frame_indices,
     group_videos_by_shape,
     is_torchvision_video_decoding_available,
     make_batched_videos,
@@ -56,6 +58,12 @@ def get_random_video(height, width, num_frames=8, return_torch=False):
         # move channel first
         return torch.from_numpy(video).permute(0, 3, 1, 2)
     return video
+
+
+class VideoUtilsTester(unittest.TestCase):
+    def test_get_uniform_frame_indices_deprecation_warning(self):
+        with pytest.warns(FutureWarning, match="default_sample_indices_fn"):
+            get_uniform_frame_indices(total_num_frames=8, num_frames=4)
 
 
 @require_vision
